@@ -1252,7 +1252,7 @@ This documentation provides a detailed overview of the function, its parameters,
 
 ---
 
-# **Building a Neural Network by Inheriting from the `Model` Class**
+# Building a Neural Network by Inheriting from the Model Class
 
 ## **Define a Custom Model Class**
 
