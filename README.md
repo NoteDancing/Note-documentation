@@ -1249,3 +1249,48 @@ model.distributed_training(
 ```
 
 This documentation provides a detailed overview of the function, its parameters, and how it interacts with TensorFlow's distributed training strategies.
+
+---
+
+# **Guide: Building a Neural Network by Inheriting from the `Model` Class**
+
+## **Define a Custom Model Class**
+
+1. Create a custom model class that inherits from `nn.Model`.
+2. Define network layers in the `__init__` method.
+3. Set up the `__call__` method to define how input data propagates through the network.
+
+Example code:
+
+```python
+from Note import nn
+
+class Model(nn.Model):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.conv2d(32, 3, activation='relu')  # Convolutional layer with 32 filters and ReLU activation
+        self.flatten = nn.flatten()                       # Flatten layer to reshape the output from the convolutional layer
+        self.d1 = nn.dense(128, activation='relu')        # Dense layer with 128 units and ReLU activation
+        self.d2 = nn.dense(10)                            # Output layer with 10 units (for classifying the 10 MNIST digits)
+
+    def __call__(self, x):
+        x = self.conv1(x)    # Apply convolutional layer
+        x = self.flatten(x)  # Apply flatten layer
+        x = self.d1(x)       # Apply first dense layer
+        return self.d2(x)    # Output layer (logits without activation)
+```
+
+## **Code Explanation**
+
+1. **Convolutional Layer (`self.conv1`)**: Defines a 2D convolutional layer to extract features from the input images.
+2. **Flatten Layer (`self.flatten`)**: Reshapes the convolutional output into a one-dimensional vector to feed into dense layers.
+3. **Dense Layer (`self.d1`)**: Defines a dense layer with 128 units for high-level feature extraction.
+4. **Output Layer (`self.d2`)**: Defines an output layer with 10 units for classifying the 10 digit classes (0-9).
+
+## **Summary**
+
+By inheriting from the `Model` class, you can create a neural network with a custom structure. The `__init__` method is used to define the layers, and the `__call__` method sets up the forward propagation logic. This setup allows for easy addition of new layers and flexible expansion of the network structure.
+
+---
+
+These are the foundational steps for building a neural network by inheriting from the `Model` class.
