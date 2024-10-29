@@ -1008,7 +1008,71 @@ These methods provide flexibility in managing complex models, particularly when 
 
 ---
 
-## 8. **`train`**
+## 8. **`cast_param`**
+
+### **Description**
+The `cast_param` method converts the data type of parameters within the model to a specified type. This is useful for optimizing model performance by ensuring consistent data types, or for adapting parameters to the precision requirements of specific hardware (e.g., changing to `float16` for faster computation on GPUs).
+
+### **Parameters**
+- **`key`** (optional, `str`):  
+   Specifies the key in `param_dict` for the parameters to be cast. If `key` is provided, only the parameters under that key are cast to the new data type.  
+   **Default**: `None` (casts all parameters in `self.param`).
+
+- **`dtype`** (`tf.DType`):  
+   The data type to which parameters should be cast (e.g., `tf.float32`, `tf.float16`).
+
+### **Returns**
+None. The method modifies the data types of parameters in place.
+
+### **Usage**
+```python
+# Cast all model parameters to float32
+model.cast_param(dtype=tf.float32)
+
+# Cast specific parameters, referenced by key, to float16
+model.cast_param(key='layer1_weights', dtype=tf.float16)
+```
+
+---
+
+This method efficiently manages parameter data types, ensuring that parameters are correctly cast, either globally or selectively by `key`.
+
+---
+
+## 9. **`summary`**
+
+### **Description:**
+The `summary` function provides an overview of the model’s parameters and memory usage. It calculates the total number of parameters in the model, categorizing them into trainable and non-trainable parameters. Additionally, it displays the memory usage of each category in a human-readable format (e.g., Bytes, KB, MB, or GB).
+
+### **Returns:**
+None. The function prints the model summary directly, showing:
+- **Total params**: The total number of parameters in the model and their memory usage.
+- **Trainable params**: The number of parameters that can be updated during training and their memory usage.
+- **Non-trainable params**: The number of parameters that remain constant during training (e.g., frozen layers) and their memory usage.
+
+### **Memory Format Conversion:**
+The function includes an internal helper, `format_memory`, that converts memory from bytes to the most appropriate unit (Bytes, KB, MB, GB), rounding to two decimal places for readability.
+
+### **Example Output:**
+```
+Model Summary
+-------------
+Total params: 407050 (1.55 MB)
+Trainable params: 407050 (1.55 MB)
+Non-trainable params: 0 (0.00 Byte)
+```
+
+### **Usage Example:**
+```python
+model = Model()
+model.summary()
+```
+
+This function is useful for obtaining an at-a-glance view of the model’s architecture in terms of parameter count and memory footprint, making it easier to analyze and debug the model setup.
+
+---
+
+## 10. **`train`**
 
 This method implements the training loop for the model, handling both training and testing (optional) over multiple epochs. It allows for configurable options like JIT (Just-In-Time) compilation, parallel testing, and automatic saving of model parameters.
 
@@ -1120,7 +1184,7 @@ This method provides flexibility in model training, especially for large models 
 
 ---
 
-## 9. **`distributed_training`**
+## 11. **`distributed_training`**
 
 ### **Description:**
 The `distributed_training` function is responsible for performing distributed training across different TensorFlow distributed strategies, including `MirroredStrategy`, `MultiWorkerMirroredStrategy`, and `ParameterServerStrategy`. It allows training to be scaled across multiple devices (GPUs, TPUs, or across multiple machines), handling both training and evaluation logic with support for different dataset distributions, batch processing, and optimization across the distributed system.
