@@ -737,6 +737,37 @@ model.set(policy=policy)
 
 ---
 
+## **AdaptiveEpsGreedyPolicy**
+
+### **Description**:
+Implements an adaptive epsilon-greedy policy. This policy dynamically adjusts the epsilon value based on the training step to balance exploration and exploitation. With a probability of `epsilon`, the policy selects a random action to encourage exploration; otherwise, it selects the action with the highest estimated Q-value.
+
+### **Constructor**:
+
+- **`__init__(initial_eps=1.0, min_eps=0.1, decay_rate=0.0001)`**:
+  - **Arguments**:
+    - `initial_eps` (`float`): The initial exploration rate (epsilon). Defaults to `1.0`.
+    - `min_eps` (`float`): The minimum epsilon value, representing the lowest exploration rate. Defaults to `0.1`.
+    - `decay_rate` (`float`): The rate at which epsilon decreases over time. Defaults to `0.0001`.
+
+### **Methods**:
+
+- **`select_action(q_values, step_counter)`**:
+  - **Arguments**:
+    - `q_values` (`np.ndarray`): Q-value estimates for each action.
+    - `step_counter` (`int`): The current training step, used to calculate the current epsilon value.
+  - **Returns**:
+    - `action` (`int`): The selected action, either random (with probability `epsilon`) or the best action (with probability `1 - epsilon`).
+
+### **Usage**:
+Use `AdaptiveEpsGreedyPolicy` with the `set` function of an RL agent:
+```python
+policy = AdaptiveEpsGreedyPolicy(initial_eps=1.0, min_eps=0.1, decay_rate=0.0001)
+model.set(policy=policy)
+``` 
+
+---
+
 ## **GreedyQPolicy**
 
 ### **Description**:
