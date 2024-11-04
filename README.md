@@ -505,6 +505,9 @@ def set(self,
 
 - **`PR`** (`bool`):  
   Whether to use Prioritized Experience Replay (PR), a technique to sample experiences based on their significance.
+  
+- **`IRL`** (`bool`):  
+  Whether to use Inverse Reinforcement Learning (IRL) to estimate the reward function based on expert trajectories. Setting this to `True` enables IRL functionality.
 
 - **`epsilon`** (`float` or `None`):  
   The `ε` value used in an `ε-greedy` policy, controlling the probability of choosing a random action to encourage exploration.
