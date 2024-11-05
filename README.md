@@ -1056,9 +1056,15 @@ class DQN(nn.RL):
         nn.assign_param(self.target_q_net.param, self.param)
 ```
 
-By using `nn`, we simplify neural network setup, making it easy to define and initialize layers and parameters across both networks. The `RL` base class enables managing RL-specific tasks like parameter updates and calculating the loss.
+### Explanation of Methods
 
-With the `RL` superclass, configuring and managing RL-specific methods, such as target network updates (`update_param`) and loss computation, becomes easier.
+- **`action` Method**: This method takes the current state `s` as input and computes the Q-values using the Q-network (`q_net`). In the context of the RL class, the action method provides output for the RL class to select actions based on the policy. It returns the predicted Q-values for each possible action, which can then be used to determine the best action to take according to the agent's policy. This function effectively allows the agent to decide its next move based on learned values, facilitating exploration and exploitation.
+
+- **`__call__` Method**: This method defines the loss calculation for DQN. It computes the Temporal Difference (TD) error by comparing the Q-value of the chosen action against the target Q-value. The target Q-value is derived from the reward and the maximum Q-value in the next state, adjusted by the discount factor.
+
+- **`update_param` Method**: This method updates the parameters of the target Q-network (`target_q_net`) with those of the main Q-network (`q_net`). It ensures that the target network stays slightly behind the main network, stabilizing the training by providing more consistent target values.
+
+Using `nn`, the `RL` base class handles much of the reinforcement learning logic, like parameter updates and replay buffer management, streamlining the creation of a DQN agent.
 
 ## Step 3: Initialize the Model and Train the Agent
 
@@ -1076,3 +1082,10 @@ model.train(train_loss, optimizer, 100)
 ``` 
 
 This setup showcases how `nn`, `Model`, and `RL` components work together to streamline the development of reinforcement learning agents.
+
+## HER:
+
+**Creating the `reward_done_func` function**:
+   - `reward_done_func` is a custom reward function used to determine whether the agent has reached its goal and to provide an appropriate reward. In HER, this function also considers “substitute goals” (i.e., the states the agent actually reached) to dynamically adjust the reward. The function calculates reward values based on the agent’s distance from the goal (or other criteria) and determines whether the episode should end.
+
+To enable a RL-based agent to support HER, an additional `reward_done_func` function needs to be defined.
