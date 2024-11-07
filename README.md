@@ -1316,6 +1316,26 @@ This documentation provides a detailed overview of the function, its parameters,
 
 ---
 
+## **`get_config`**
+
+The `get_config` function retrieves the configuration settings of the `Model` instance. These settings include parameters related to model saving, training, evaluation, and distributed processing, which are useful for reproducing training conditions or debugging.
+
+### Parameters
+The function does not require any parameters.
+
+### Returns
+- **config (dict)**: A dictionary containing model configuration settings.
+
+### Description
+The `get_config` function:
+1. Checks the value of `config_flag` to determine which set of configurations to retrieve.
+   - If config_flag is 0, it retrieves a set of parameters suited for training setups.
+   - Otherwise, retrieves a set of parameters suited for distributed training setups.
+2. Populates the `config` dictionary with the relevant attributes.
+3. Attempts to retrieve additional settings related to batch size, loss functions, optimizers, epochs, and distributed strategy settings if available.
+
+The `get_config` function makes use of `try-except` blocks to handle potential errors if certain attributes are not defined in the current configuration.
+
 # Building a Neural Network by Inheriting from the Model Class
 
 ## **Define a Custom Model Class**
