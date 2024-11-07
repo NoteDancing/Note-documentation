@@ -81,7 +81,7 @@ from Note.models.docs_example.RL.note.MADDPG import DDPG
 # from Note.models.docs_example.RL.keras.MADDPG import DDPG
 
 model=DDPG(128,0.1,0.98,0.005)
-model.set(policy=rl.SoftmaxPolicy(),pool_size=3000,batch=32,trial_count=10,MA=True)
+model.set(policy=rl.SoftmaxPolicy(),pool_size=3000,batch=32,trial_count=10,MARL=True)
 optimizer = [tf.keras.optimizers.Adam(),tf.keras.optimizers.Adam()]
 train_loss = tf.keras.metrics.Mean(name='train_loss')
 model.train(train_loss, optimizer, 100)
@@ -196,7 +196,7 @@ from Note.RL import rl
 from Note.models.docs_example.RL.pytorch.MADDPG import DDPG
 
 model=DDPG(128,0.1,0.98,0.005)
-model.set(policy=rl.SoftmaxPolicy(),pool_size=3000,batch=32,trial_count=10,MA=True)
+model.set(policy=rl.SoftmaxPolicy(),pool_size=3000,batch=32,trial_count=10,MARL=True)
 optimizer = [torch.optim.Adam(model.param[0]),torch.optim.Adam(model.param[1])]
 model.train(optimizer, 100)
 ```
@@ -328,7 +328,7 @@ with strategy.scope():
   model=DDPG(128,0.1,0.98,0.005)
   optimizer = [tf.keras.optimizers.Adam(),tf.keras.optimizers.Adam()]
 
-model.set(policy=rl.SoftmaxPolicy(),pool_size=3000,trial_count=10,MA=True)
+model.set(policy=rl.SoftmaxPolicy(),pool_size=3000,trial_count=10,MARL=True)
 model.distributed_training(GLOBAL_BATCH_SIZE, optimizer, strategy, 100)
 ```
 ```python
@@ -459,7 +459,7 @@ def set(self,
         criterion=None, 
         PPO=False, 
         HER=False, 
-        MA=False, 
+        MARL=False, 
         PR=False, 
         epsilon=None, 
         initial_TD=7., 
@@ -500,8 +500,8 @@ def set(self,
 - **`HER`** (`bool`):  
   Whether to use Hindsight Experience Replay (HER), typically used for goal-oriented tasks.
 
-- **`MA`** (`bool`):  
-  Whether to use Multi-Agent (MA) reinforcement learning.
+- **`MARL`** (`bool`):  
+  Whether to use Multi-Agent (MARL) reinforcement learning.
 
 - **`PR`** (`bool`):  
   Whether to use Prioritized Experience Replay (PR), a technique to sample experiences based on their significance.
@@ -1083,9 +1083,16 @@ model.train(train_loss, optimizer, 100)
 
 This setup showcases how `nn`, `Model`, and `RL` components work together to streamline the development of reinforcement learning agents.
 
-## HER:
+## HER(Hindsight Experience Replay):
 
 **Creating the `reward_done_func` function**:
    - `reward_done_func` is a custom reward function used to determine whether the agent has reached its goal and to provide an appropriate reward. In HER, this function also considers “substitute goals” (i.e., the states the agent actually reached) to dynamically adjust the reward. The function calculates reward values based on the agent’s distance from the goal (or other criteria) and determines whether the episode should end.
 
 To enable a RL-based agent to support HER, an additional `reward_done_func` function needs to be defined.
+
+## MARL(Multi-agent reinforcement learning):
+
+**Creating the `reward_done_func_ma` function**:
+   - In multi-agent environments, each agent may have its own reward function and criteria for completion, depending on individual or team-based goals. The `reward_done_func_ma` can be adapted to multi-agent scenarios to compute rewards and evaluate termination conditions for each agent based on their interactions and objectives. This function ensures that agents receive rewards tailored to their specific goals, supporting individual learning.
+
+To enable a RL-based agent to support MARL, an additional `reward_done_func_ma` function needs to be defined.
