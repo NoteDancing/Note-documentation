@@ -3188,6 +3188,74 @@ normalized_data = layer_norm_layer(data)
 print(normalized_data.shape)  # Output shape will be (32, 10, 128)
 ```
 
+# LayerScale
+
+The `LayerScale` class applies a learnable scaling parameter to tensors, which can enhance training stability and performance in transformer-based models or other architectures.
+
+**Initialization Parameters**
+
+- **dim** (int): The size of the last dimension of the input tensor.
+- **init_values** (float, optional): Initial value for the scaling parameter (`gamma`). Default is `1e-5`.
+
+**Methods**
+
+- **__call__(self, x)**: Scales the input tensor using the learnable parameter `gamma`.
+
+  - **Parameters**:
+    - **x**: Input tensor with shape `(batch_size, ..., dim)`.
+
+  - **Returns**: The scaled tensor.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the LayerScale layer
+layer_scale = nn.LayerScale(dim=64)
+
+# Generate some sample data
+data = tf.random.normal((2, 10, 64))  # Batch size 2, 10 elements, 64 dimensions each
+
+# Apply LayerScale
+output = layer_scale(data)
+```
+
+# LayerScale2d
+
+The `LayerScale2d` class applies a learnable scaling parameter to 2D tensors with NHWC (batch, height, width, channels) layout, commonly used in CNN-based models.
+
+**Initialization Parameters**
+
+- **dim** (int): The number of channels in the NHWC layout.
+- **init_values** (float, optional): Initial value for the scaling parameter (`gamma`). Default is `1e-5`.
+
+**Methods**
+
+- **__call__(self, x)**: Scales the input tensor using the learnable parameter `gamma`.
+
+  - **Parameters**:
+    - **x**: Input tensor with shape `(batch_size, height, width, channels)`.
+
+  - **Returns**: The scaled tensor.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the LayerScale2d layer
+layer_scale2d = nn.LayerScale2d(dim=32)
+
+# Generate some sample 2D data
+data = tf.random.normal((2, 32, 32, 32))  # Batch size 2, 32x32 image, 32 channels
+
+# Apply LayerScale2d
+output = layer_scale2d(data)
+```
+
 # Linformer_self_attention
 
 The `Linformer_self_attention` class implements the Linformer self-attention mechanism, which reduces the computational complexity of the traditional self-attention by projecting the sequence length dimension.
