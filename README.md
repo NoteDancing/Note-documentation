@@ -3143,6 +3143,54 @@ print(output.shape)  # Output shape will be (32, 128)
 print(new_state.shape)  # New state shape will be (32, 128)
 ```
 
+# LambdaLayer
+
+The `LambdaLayer` class implements a Lambda Network module, enabling efficient modeling of long-range interactions in feature maps without relying on traditional attention mechanisms. This layer supports both local lambda convolutions and relative positional embeddings, making it versatile for use in vision-based tasks.
+
+**Initialization Parameters**
+
+- **dim** (int): Input dimension to the module.
+- **dim_out** (int, optional): Output dimension of the module. Defaults to the input dimension if not set.
+- **feat_size** (tuple of int, optional): Spatial dimensions (H, W) of the input feature map. Required when using relative positional embeddings.
+- **stride** (int, optional): Output stride of the module. If set to 2, applies average pooling. Default is 1.
+- **num_heads** (int, optional): Number of parallel attention heads. Default is 4.
+- **dim_head** (int, optional): Dimension of the query and key heads. If not set, derived using `qk_ratio`. Default is `None`.
+- **r** (int, optional): Radius for local lambda convolutions. If `None`, enables relative positional embeddings. Default is 9.
+- **qk_ratio** (float, optional): Ratio of query and key dimensions to the output dimension when `dim_head` is not set. Default is 1.0.
+- **qkv_bias** (bool, optional): Whether to add bias to the query, key, and value projections. Default is `False`.
+
+**Methods**
+
+- **__call__(self, x)**: Applies the Lambda Network module to the input tensor.
+
+  - **Parameters**:
+    - **x**: Input tensor with shape `(batch_size, height, width, channels)`.
+
+  - **Returns**: Transformed output tensor with enhanced long-range interactions.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the LambdaLayer
+lambda_layer = nn.LambdaLayer(
+    dim=64,
+    dim_out=128,
+    feat_size=(32, 32),
+    stride=2,
+    num_heads=8,
+    r=9
+)
+
+# Generate some sample data
+data = tf.random.normal((2, 32, 32, 64))  # Batch size 2, 32x32 spatial dimensions, 64 channels
+
+# Apply LambdaLayer
+output = lambda_layer(data)
+```
+
 # layer_norm
 
 The `layer_norm` class implements layer normalization, a technique used to normalize the inputs across the features of a layer. This normalization helps stabilize and accelerate the training of deep neural networks.
