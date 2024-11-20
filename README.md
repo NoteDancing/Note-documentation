@@ -2581,6 +2581,54 @@ data = tf.random.normal((2, 4, 4, 4, 3))
 output = gmp3d(data)
 ```
 
+# GlobalContext
+
+The `GlobalContext` class implements a Global Context Attention Block, inspired by the GCNet paper. This block captures global contextual information and integrates it into feature representations using attention mechanisms and fully connected layers.
+
+**Initialization Parameters**
+
+- **channels** (int): Number of input channels.
+- **use_attn** (bool, optional): Whether to use the attention mechanism for context computation. Default is `True`.
+- **fuse_add** (bool, optional): Whether to use an additive fusion mechanism. Default is `False`.
+- **fuse_scale** (bool, optional): Whether to use a scaling fusion mechanism. Default is `True`.
+- **init_last_zero** (bool, optional): Whether to initialize the last layer's weights to zero for residual learning. Default is `False`.
+- **rd_ratio** (float, optional): Reduction ratio for the intermediate channels in fusion mechanisms. Default is `1./8`.
+- **rd_channels** (int, optional): Fixed number of reduced channels. Overrides `rd_ratio` if set. Default is `None`.
+- **rd_divisor** (int, optional): Divisor used for ensuring divisible reduced channels. Default is `1`.
+- **act_layer** (callable, optional): Activation function for the fusion mechanisms. Default is `tf.nn.relu`.
+- **gate_layer** (callable, optional): Gating function applied in the scaling mechanism. Default is `tf.nn.sigmoid`.
+
+**Methods**
+
+- **__call__(self, x)**: Applies the Global Context Attention Block to the input tensor.
+
+  - **Parameters**:
+    - **x**: Input tensor of shape `(batch_size, height, width, channels)`.
+
+  - **Returns**: Transformed tensor with enhanced global context information.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the GlobalContext layer
+gc_layer = nn.GlobalContext(
+    channels=128,
+    use_attn=True,
+    fuse_add=True,
+    fuse_scale=True,
+    rd_ratio=1./4
+)
+
+# Generate some sample data
+data = tf.random.normal((2, 32, 32, 128))  # Batch size 2, spatial dimensions 32x32, 128 channels
+
+# Apply GlobalContext
+output = gc_layer(data)
+```
+
 # grouped_query_attention
 
 The `grouped_query_attention` class implements the grouped-query attention mechanism introduced by Ainslie et al. (2023). This mechanism improves the efficiency and scalability of attention layers in neural networks by grouping query, key, and value projections.
