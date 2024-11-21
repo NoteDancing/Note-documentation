@@ -2629,6 +2629,41 @@ data = tf.random.normal((2, 32, 32, 128))  # Batch size 2, spatial dimensions 32
 output = gc_layer(data)
 ```
 
+# GlobalResponseNorm
+
+The `GlobalResponseNorm` class implements the Global Response Normalization (GRN) layer, a normalization mechanism introduced in ConvNeXt-V2 for stabilizing training and enhancing performance. GRN works with both `NHWC` and `NCHW` tensor layouts and adjusts activations globally across spatial dimensions.
+
+**Initialization Parameters**
+
+- **dim** (int): Number of channels in the input tensor.
+- **eps** (float, optional): Small constant added for numerical stability. Default is `1e-6`.
+- **channels_last** (bool, optional): Specifies whether the input tensor uses the `NHWC` layout. Default is `True`.
+
+**Methods**
+
+- **__call__(self, x)**: Applies the Global Response Normalization to the input tensor.
+
+  - **Parameters**:
+    - **x**: Input tensor of shape `(batch_size, height, width, channels)` (if `channels_last=True`) or `(batch_size, channels, height, width)` (if `channels_last=False`).
+
+  - **Returns**: Tensor of the same shape as the input, with normalized activations.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the GlobalResponseNorm layer
+grn_layer = nn.GlobalResponseNorm(dim=128, eps=1e-6, channels_last=True)
+
+# Generate some sample data
+data = tf.random.normal((2, 32, 32, 128))  # Batch size 2, spatial dimensions 32x32, 128 channels
+
+# Apply GlobalResponseNorm
+output = grn_layer(data)
+```
+
 # grouped_query_attention
 
 The `grouped_query_attention` class implements the grouped-query attention mechanism introduced by Ainslie et al. (2023). This mechanism improves the efficiency and scalability of attention layers in neural networks by grouping query, key, and value projections.
