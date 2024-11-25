@@ -1290,6 +1290,69 @@ output = caps_layer(input_tensor)
 print(output.shape)  # Should be (32, 10, 16, 1) if the num_outputs is 10 and vec_len is 16
 ```
 
+# CbamModule
+
+The standard CBAM module with original channel and spatial attention mechanisms.
+
+## Initialization Parameters
+
+- **channels** (int): Number of input channels.
+- **rd_ratio** (float, optional): Reduction ratio for channel attention. Default is `1/16`.
+- **rd_channels** (int, optional): Fixed number of reduced channels. Default is `None`.
+- **rd_divisor** (int, optional): Ensures reduced channels are divisible by this value. Default is `1`.
+- **spatial_kernel_size** (int, optional): Kernel size for spatial attention convolution. Default is `7`.
+- **act_layer** (callable, optional): Activation function for intermediate layers. Default is `tf.nn.relu`.
+- **gate_layer** (callable, optional): Activation function for gating. Default is `tf.nn.sigmoid`.
+- **mlp_bias** (bool, optional): If `True`, use biases in MLP layers. Default is `False`.
+
+## Methods
+
+- **__call__(self, x)**: Applies CBAM attention to the input tensor.
+
+  - **Parameters**:
+    - **x**: Input tensor of shape `(batch_size, height, width, channels)`.
+
+  - **Returns**: Tensor of the same shape as the input, with attention applied.
+
+# LightCbamModule
+
+A lightweight variant that simplifies the attention computations.
+
+## Initialization Parameters
+
+Same as `CbamModule`, but uses reduced operations for channel and spatial attention.
+
+## Methods
+
+- **__call__(self, x)**: Applies lightweight CBAM attention to the input tensor.
+
+  - **Parameters**:
+    - **x**: Input tensor of shape `(batch_size, height, width, channels)`.
+
+  - **Returns**: Tensor of the same shape as the input, with lightweight attention applied.
+
+## Example Usage
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the CBAM module
+cbam = nn.CbamModule(channels=64, rd_ratio=1./16, spatial_kernel_size=7)
+
+# Generate some sample data
+data = tf.random.normal((2, 32, 32, 64))  # Batch size 2, spatial dimensions 32x32, 64 channels
+
+# Apply CBAM
+output = cbam(data)
+
+# Create an instance of the lightweight CBAM module
+light_cbam = nn.LightCbamModule(channels=64, rd_ratio=1./16, spatial_kernel_size=7)
+
+# Apply lightweight CBAM
+light_output = light_cbam(data)
+```
+
 # ClassifierHead
 
 This class implements a classifier head with configurable global pooling and dropout options.
@@ -4507,6 +4570,57 @@ data = tf.random.normal((2, 5, 10))
 
 # Apply permutation
 output = permuter(data)
+```
+
+# resample_abs_pos_embed
+
+Resizes token-based absolute position embeddings for inputs with a different spatial resolution.
+
+## Parameters
+
+- **posemb** (tensor): The original position embedding tensor of shape `(batch_size, num_tokens, embed_dim)`.
+- **new_size** (list of int): The new spatial resolution as `[height, width]`.
+- **old_size** (list of int, optional): The original spatial resolution as `[height, width]`. If `None`, inferred as square.
+- **num_prefix_tokens** (int, optional): Number of prefix tokens (e.g., class tokens). Default is `1`.
+- **interpolation** (str, optional): Interpolation mode. Options are `bilinear`, `bicubic`, etc. Default is `'bicubic'`.
+- **antialias** (bool, optional): Whether to apply anti-aliasing during interpolation. Default is `True`.
+- **verbose** (bool, optional): If `True`, logs additional details during processing. Default is `False`.
+
+## Returns
+
+- A resized position embedding tensor of shape `(batch_size, num_new_tokens, embed_dim)`.
+
+# resample_abs_pos_embed_nhwc
+
+Resizes NHWC-style position embeddings (e.g., for image-based inputs) for new spatial dimensions.
+
+## Parameters
+
+- **posemb** (tensor): The original position embedding tensor of shape `(batch_size, height, width, channels)`.
+- **new_size** (list of int): The new spatial resolution as `[height, width]`.
+- **interpolation** (str, optional): Interpolation mode. Options are `bilinear`, `bicubic`, etc. Default is `'bicubic'`.
+- **antialias** (bool, optional): Whether to apply anti-aliasing during interpolation. Default is `True`.
+- **verbose** (bool, optional): If `True`, logs additional details during processing. Default is `False`.
+
+## Returns
+
+- A resized position embedding tensor of shape `(batch_size, new_height, new_width, channels)`.
+
+## Example Usage
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Example: Resample token-based position embeddings
+posemb = tf.random.normal((1, 197, 768))  # Batch size 1, 197 tokens, embedding dim 768
+new_size = [14, 14]
+resampled_posemb = nn.resample_abs_pos_embed(posemb, new_size)
+
+# Example: Resample NHWC-style position embeddings
+posemb_nhwc = tf.random.normal((1, 16, 16, 768))  # Batch size 1, 16x16 spatial size, 768 channels
+new_size_nhwc = [32, 32]
+resampled_posemb_nhwc = nn.resample_abs_pos_embed_nhwc(posemb_nhwc, new_size_nhwc)
 ```
 
 # RotaryEmbedding
