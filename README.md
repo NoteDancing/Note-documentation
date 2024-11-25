@@ -1294,7 +1294,7 @@ print(output.shape)  # Should be (32, 10, 16, 1) if the num_outputs is 10 and ve
 
 The standard CBAM module with original channel and spatial attention mechanisms.
 
-## Initialization Parameters
+**Initialization Parameters**
 
 - **channels** (int): Number of input channels.
 - **rd_ratio** (float, optional): Reduction ratio for channel attention. Default is `1/16`.
@@ -1305,7 +1305,7 @@ The standard CBAM module with original channel and spatial attention mechanisms.
 - **gate_layer** (callable, optional): Activation function for gating. Default is `tf.nn.sigmoid`.
 - **mlp_bias** (bool, optional): If `True`, use biases in MLP layers. Default is `False`.
 
-## Methods
+**Methods**
 
 - **__call__(self, x)**: Applies CBAM attention to the input tensor.
 
@@ -1318,11 +1318,11 @@ The standard CBAM module with original channel and spatial attention mechanisms.
 
 A lightweight variant that simplifies the attention computations.
 
-## Initialization Parameters
+**Initialization Parameters**
 
 Same as `CbamModule`, but uses reduced operations for channel and spatial attention.
 
-## Methods
+**Methods**
 
 - **__call__(self, x)**: Applies lightweight CBAM attention to the input tensor.
 
@@ -1331,7 +1331,7 @@ Same as `CbamModule`, but uses reduced operations for channel and spatial attent
 
   - **Returns**: Tensor of the same shape as the input, with lightweight attention applied.
 
-## Example Usage
+**Example Usage**
 
 ```python
 import tensorflow as tf
@@ -4576,7 +4576,7 @@ output = permuter(data)
 
 Resizes token-based absolute position embeddings for inputs with a different spatial resolution.
 
-## Parameters
+**Parameters**
 
 - **posemb** (tensor): The original position embedding tensor of shape `(batch_size, num_tokens, embed_dim)`.
 - **new_size** (list of int): The new spatial resolution as `[height, width]`.
@@ -4586,7 +4586,7 @@ Resizes token-based absolute position embeddings for inputs with a different spa
 - **antialias** (bool, optional): Whether to apply anti-aliasing during interpolation. Default is `True`.
 - **verbose** (bool, optional): If `True`, logs additional details during processing. Default is `False`.
 
-## Returns
+**Returns**
 
 - A resized position embedding tensor of shape `(batch_size, num_new_tokens, embed_dim)`.
 
@@ -4594,7 +4594,7 @@ Resizes token-based absolute position embeddings for inputs with a different spa
 
 Resizes NHWC-style position embeddings (e.g., for image-based inputs) for new spatial dimensions.
 
-## Parameters
+**Parameters**
 
 - **posemb** (tensor): The original position embedding tensor of shape `(batch_size, height, width, channels)`.
 - **new_size** (list of int): The new spatial resolution as `[height, width]`.
@@ -4602,11 +4602,11 @@ Resizes NHWC-style position embeddings (e.g., for image-based inputs) for new sp
 - **antialias** (bool, optional): Whether to apply anti-aliasing during interpolation. Default is `True`.
 - **verbose** (bool, optional): If `True`, logs additional details during processing. Default is `False`.
 
-## Returns
+**Returns**
 
 - A resized position embedding tensor of shape `(batch_size, new_height, new_width, channels)`.
 
-## Example Usage
+**Example Usage**
 
 ```python
 import tensorflow as tf
