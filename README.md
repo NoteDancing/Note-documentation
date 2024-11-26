@@ -5502,6 +5502,55 @@ data = tf.random.normal((2, 64, 64, 3))
 output = sn_layer(data, train_flag=True)
 ```
 
+# SplitAttn
+
+The `SplitAttn` class implements Split-Attention Conv2D, a building block used in ResNeSt models. It introduces "split attention" mechanisms that allow attention to be applied across feature map groups, improving performance in various computer vision tasks.
+
+**Initialization Parameters**
+
+- **in_channels** (int): Number of input channels.
+- **out_channels** (int, optional): Number of output channels. Defaults to `in_channels`.
+- **kernel_size** (int, optional): Size of the convolution kernel. Default is `3`.
+- **stride** (int, optional): Stride of the convolution. Default is `1`.
+- **padding** (int, optional): Padding applied to the input. Default is `kernel_size // 2`.
+- **dilation** (int, optional): Dilation rate for the convolution. Default is `1`.
+- **groups** (int, optional): Number of groups for grouped convolution. Default is `1`.
+- **bias** (bool, optional): Whether to include a bias term in convolutions. Default is `False`.
+- **radix** (int, optional): Number of splits for split-attention. Default is `2`.
+- **rd_ratio** (float, optional): Reduction ratio for the attention channels. Default is `0.25`.
+- **rd_channels** (int, optional): Fixed number of reduced channels. Default is `None`.
+- **rd_divisor** (int, optional): Divisor to ensure reduced channels are divisible. Default is `8`.
+- **act_layer** (callable, optional): Activation function. Default is `tf.nn.relu`.
+- **norm_layer** (callable, optional): Normalization layer. Default is `None`.
+- **drop_layer** (callable, optional): Dropout layer. Default is `None`.
+
+**Methods**
+
+- **`__call__(self, x)`**
+Applies the Split-Attention operation to the input tensor.
+
+  - **Parameters**
+    - **x** (tensor): Input tensor of shape `(batch_size, height, width, in_channels)`.
+
+  - **Returns**
+    - **tensor**: Output tensor after applying split attention, with the same spatial dimensions as the input.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the Split Attention Conv2D layer
+split_attn = nn.SplitAttn(in_channels=64, out_channels=128, kernel_size=3, radix=2)
+
+# Generate a sample input tensor
+x = tf.random.normal((2, 32, 32, 64))  # Batch size 2, 32x32 spatial size, 64 channels
+
+# Apply Split Attention Conv2D
+output = split_attn(x)
+```
+
 # SEModule
 
 The `SEModule` class implements a Squeeze-and-Excitation module, which adaptively recalibrates channel-wise feature responses.
