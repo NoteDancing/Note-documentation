@@ -547,6 +547,7 @@ The `avg_pool2d` class performs 2D average pooling on the input tensor.
 - **`kernel_size`** (int or tuple of 2 ints): Size of the window for each dimension of the input tensor.
 - **`strides`** (int or tuple of 2 ints): Stride of the sliding window for each dimension of the input tensor. Default is `None`. If `None`, it will default to `kernel_size`.
 - **`padding`** (str, int, list, tuple): implicit zero paddings on both sides of the input. Default is `0`.
+- **`count_include_pad`** (bool): whether to include zero padding in the average calculation. Default is `True`.
 
 **Methods**
 
