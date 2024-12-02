@@ -2357,6 +2357,52 @@ output = flatten_layer(input_data)
 print(output.shape)  # Should be (8, 65536)
 ```
 
+# GatherExcite
+
+The `GatherExcite` class implements the Gather-Excite attention mechanism, designed to enhance convolutional networks by leveraging spatial and channel-wise feature context. It generalizes Squeeze-and-Excitation (SE) with additional flexibility through spatial extent and optional extra parameters.
+
+**Initialization Parameters**
+
+- **channels** (int): Number of input and output channels.
+- **feat_size** (int, optional): Spatial feature size for global extent with extra parameters. Required when `extent=0` and `extra_params=True`.
+- **extra_params** (bool): If `True`, includes convolutional layers for the gather step. Default is `False`.
+- **extent** (int): Controls the spatial extent for feature gathering. `0` indicates global extent. Must be even if greater than `0`. Default is `0`.
+- **use_mlp** (bool): Whether to use a multi-layer perceptron for feature transformation. Default is `True`.
+- **rd_ratio** (float): Reduction ratio for the number of channels in the MLP. Default is `1/16`.
+- **rd_channels** (int, optional): Explicit number of reduced channels in the MLP. Overrides `rd_ratio` if provided.
+- **rd_divisor** (int): Divisor used when computing reduced channels. Default is `1`.
+- **add_maxpool** (bool): If `True`, adds max pooling to the gather step for enhanced feature aggregation. Default is `False`.
+- **act_layer** (callable): Activation function for intermediate layers. Default is `tf.nn.relu`.
+- **norm_layer** (callable): Normalization layer to use after convolutions. Default is `nn.batch_norm`.
+- **gate_layer** (callable): Gating function to modulate features. Default is `tf.nn.sigmoid`.
+
+**Methods**
+
+**`__call__(self, x)`**
+Applies the Gather-Excite attention mechanism to the input tensor.
+
+**Parameters**
+- **x** (tf.Tensor): Input tensor of shape `(batch_size, height, width, channels)`.
+
+**Returns**
+- **tf.Tensor**: Tensor of the same shape as the input, modulated by the attention mechanism.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create an instance of the GatherExcite attention module
+ge = nn.GatherExcite(channels=64, extent=2, use_mlp=True)
+
+# Generate some sample data
+data = tf.random.normal((2, 32, 32, 64))
+
+# Apply the GatherExcite mechanism
+output = ge(data)
+```
+
 # gaussian_dropout
 
 This class applies multiplicative 1-centered Gaussian noise, useful for regularization during training.
@@ -3031,6 +3077,50 @@ output = identity_layer(data)
 
 print(output.shape)  # Output shape will be (32, 128), same as input shape
 print(tf.reduce_all(tf.equal(data, output)))  # Should print True, indicating the output is the same as input
+```
+
+# RegularGridInterpolator
+
+The `RegularGridInterpolator` class performs interpolation on data defined over a rectilinear grid, supporting both evenly and unevenly spaced points. It mimics the behavior of SciPy's `RegularGridInterpolator` in "linear" mode and is particularly useful for tasks requiring multidimensional grid-based interpolation.
+
+**Initialization Parameters**
+
+- **points** (list or tuple): A sequence of 1D tensors specifying the grid points along each dimension. The length of the list/tuple corresponds to the number of dimensions.
+- **values** (tf.Tensor): A tensor containing the data values at the grid points. The shape must match the lengths of the grid defined by `points`.
+
+**Methods**
+
+**`__call__(self, points_to_interp)`**
+Interpolates the data values at the specified query points.
+
+**Parameters**
+- **points_to_interp** (list): A list of 1D tensors, where each tensor specifies the query points along one dimension. The length of the list must match the number of dimensions.
+
+**Returns**
+- **tf.Tensor**: A tensor containing the interpolated values at the query points.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Define grid points and corresponding values
+x = tf.linspace(0.0, 10.0, 11)
+y = tf.linspace(0.0, 5.0, 6)
+grid_points = (x, y)
+values = tf.random.normal((11, 6))
+
+# Create an instance of RegularGridInterpolator
+interpolator = nn.RegularGridInterpolator(points=grid_points, values=values)
+
+# Define query points
+query_x = tf.constant([2.5, 7.5])
+query_y = tf.constant([1.0, 4.0])
+query_points = [query_x, query_y]
+
+# Perform interpolation
+interpolated_values = interpolator(query_points)
 ```
 
 # kernel_attention
