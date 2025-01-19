@@ -4505,6 +4505,112 @@ output = attention_layer(
 )
 ```
 
+# NonLocalAttn
+
+The `NonLocalAttn` class implements a spatial non-local attention mechanism for image classification. It computes pairwise feature correlations to model long-range dependencies, inspired by "Non-Local Neural Networks" and adapted from the implementation in the BAT Image Classification repository.
+
+**Initialization Parameters**
+
+- **in_channels** (int): Number of input feature channels.
+- **use_scale** (bool, optional): If `True`, scales the attention weights by the inverse square root of `in_channels`. Default is `True`.
+- **rd_ratio** (float, optional): Reduction ratio to calculate reduced channels. Default is `1/8`.
+- **rd_channels** (int, optional): Precomputed number of reduced channels. Overrides `rd_ratio` if specified. Default is `None`.
+- **rd_divisor** (int, optional): Divisor for aligning the reduced channels. Default is `8`.
+
+**Methods**
+
+- **__call__(self, x)**: Applies non-local attention to the input tensor.
+  - **x**: Input tensor of shape `(B, H, W, C)`.
+  - **Returns**: Output tensor of the same shape as the input.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create a NonLocalAttn instance
+nla = NonLocalAttn(in_channels=64)
+
+# Generate sample input
+x = tf.random.normal((2, 32, 32, 64))
+
+# Apply non-local attention
+output = nla(x)
+```
+
+# BilinearAttnTransform
+
+The `BilinearAttnTransform` class implements grouped bilinear attention transforms as described in the BAT paper. It enhances feature interactions within spatial blocks of the input tensor.
+
+**Initialization Parameters**
+
+- **in_channels** (int): Number of input feature channels.
+- **block_size** (int): Spatial block size for computing bilinear attention.
+- **groups** (int): Number of groups for grouped bilinear transformations.
+- **act_layer** (callable, optional): Activation function. Default is `tf.nn.relu`.
+- **norm_layer** (callable, optional): Normalization layer. Default is `nn.batch_norm`.
+
+**Methods**
+
+- **__call__(self, x)**: Applies bilinear attention transformation to the input tensor.
+  - **x**: Input tensor of shape `(B, H, W, C)`.
+  - **Returns**: Output tensor of the same shape as the input.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create a BilinearAttnTransform instance
+bat = BilinearAttnTransform(in_channels=128, block_size=8, groups=4)
+
+# Generate sample input
+x = tf.random.normal((2, 64, 64, 128))
+
+# Apply bilinear attention transform
+output = bat(x)
+```
+
+# BatNonLocalAttn
+
+The `BatNonLocalAttn` class combines bilinear attention transforms and non-local attention to enhance long-range dependencies and local feature interactions.
+
+**Initialization Parameters**
+
+- **in_channels** (int): Number of input feature channels.
+- **block_size** (int, optional): Spatial block size for bilinear attention. Default is `7`.
+- **groups** (int, optional): Number of groups for bilinear transformations. Default is `2`.
+- **rd_ratio** (float, optional): Reduction ratio to compute reduced channels. Default is `0.25`.
+- **rd_channels** (int, optional): Precomputed number of reduced channels. Overrides `rd_ratio` if specified. Default is `None`.
+- **rd_divisor** (int, optional): Divisor for aligning reduced channels. Default is `8`.
+- **drop_rate** (float, optional): Dropout rate for regularization. Default is `0.2`.
+- **act_layer** (callable, optional): Activation function. Default is `tf.nn.relu`.
+- **norm_layer** (callable, optional): Normalization layer. Default is `nn.batch_norm`.
+
+**Methods**
+
+- **__call__(self, x)**: Applies the BatNonLocalAttn mechanism to the input tensor.
+  - **x**: Input tensor of shape `(B, H, W, C)`.
+  - **Returns**: Output tensor of the same shape as the input.
+
+**Example Usage**
+
+```python
+import tensorflow as tf
+from Note import nn
+
+# Create a BatNonLocalAttn instance
+bat_nla = BatNonLocalAttn(in_channels=128, block_size=7, groups=2)
+
+# Generate sample input
+x = tf.random.normal((2, 64, 64, 128))
+
+# Apply BatNonLocalAttn
+output = bat_nla(x)
+```
+
 # norm
 
 The `norm` class is a preprocessing layer that normalizes continuous features by shifting and scaling inputs into a distribution centered around 0 with a standard deviation of 1.
